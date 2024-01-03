@@ -8,14 +8,14 @@ int RightChar,LeftChar,UpChar,DownChar;
 int row = 7;
 int col = 8;
 int WordCount = 8;
-void blankArrayReset(){
+void blankArrayReset(){ //inisialisasi semua isi matriks jawaban dengan "-"
     for(int i = 0; i<row; i++){
         for(int j = 0; j<col; j++){
             blankArray[i][j] = '-';
         }
     }
 }
-void PrintBlankArray(){
+void PrintBlankArray(){ //cetak matriks jawaban
     for(int i = 0; i<row; i++){
         for(int j = 0; j<col; j++){
             cout<<blankArray[i][j]<<" ";
@@ -24,7 +24,7 @@ void PrintBlankArray(){
     }
 }
 
-bool isAnswerFound(string CheckString){
+bool isAnswerFound(string CheckString){ //tentukan apakah string yang dicari ada di Wordlist
     for(int i = 0; i<WordCount; i++){
         if(CheckString == WordList[i]){
             return true;
@@ -32,188 +32,115 @@ bool isAnswerFound(string CheckString){
     }
     return false;
 }
+bool horizontalCheck(int Horizontal,int HorizontalChar){ //fungsi pembantu kondisi check horizontal
+    if(Horizontal == 1){
+        return (HorizontalChar<col);
+    } else {
+        return (HorizontalChar>=0);
+    }
+}
+bool verticalCheck(int Vertical,int VerticalChar){ //fungsi pembantu kondisi check vertikal
+    if(Vertical == 1){
+        return (VerticalChar<row);
+    } else {
+        return (VerticalChar>=0);
+    }
+}
+int NextIndex(int HV, int HVChar){ //fungsi pembantu untuk menentukan indeks selanjutnya
+    if(HV == 1){
+        return HVChar+1;
+    } else {
+        return HVChar-1;
+    }
+}
+void PrintSolutions(int Horizontal, int Vertical){
+    //keterangan:
+    //Horizontal: 0: diam di tempat 1: kanan -1: kiri
+    //Vertical: 0: diam di tempat 1: bawah -1: atas
+    if(Horizontal == 0 && Vertical == 0){
+        return;
+    }
+    int HorizontalChar,VerticalChar;
+    bool check1,check2;
+    for(int i = 0; i<row; i++){
+        StringTemp = "";  //reset string
+        blankArrayReset();
+        for(int j = 0; j<col; j++){
+            HorizontalChar = j;
+            VerticalChar = i;
+            StringTemp = "";
+            blankArrayReset();
+            if(Vertical == 0){ //vertikal saja
+                check1 = horizontalCheck(Horizontal,HorizontalChar);
+                while(check1){
+                    StringTemp = StringTemp + arrayChar[i][HorizontalChar];
+                    blankArray[i][HorizontalChar] = arrayChar[i][HorizontalChar];
+                    if(isAnswerFound(StringTemp)){
+                        PrintBlankArray();
+                        cout<<StringTemp<<"\n";
+                    }
+                    HorizontalChar = NextIndex(Horizontal,HorizontalChar);
+                    check1 = horizontalCheck(Horizontal,HorizontalChar);
+                }
+            } else if(Horizontal == 0){ //horizontal saja
+                check1 = verticalCheck(Vertical,VerticalChar);
+                while(check1){
+                    StringTemp = StringTemp + arrayChar[VerticalChar][j];
+                    blankArray[VerticalChar][j] = arrayChar[VerticalChar][j];
+                    if(isAnswerFound(StringTemp)){
+                        PrintBlankArray();
+                        cout<<StringTemp<<"\n";
+                    }
+                    VerticalChar = NextIndex(Vertical,VerticalChar);
+                    check1 = verticalCheck(Vertical,VerticalChar);
+                }
+            } else { //diagonal
+                check1 = horizontalCheck(Horizontal,HorizontalChar);
+                check2 = verticalCheck(Vertical,VerticalChar);
+                while(check1 && check2){
+                    StringTemp = StringTemp + arrayChar[VerticalChar][HorizontalChar];
+                    blankArray[VerticalChar][HorizontalChar] = arrayChar[VerticalChar][HorizontalChar];
+                    if(isAnswerFound(StringTemp)){
+                        PrintBlankArray();
+                        cout<<StringTemp<<"\n";
+                    }
+                    HorizontalChar = NextIndex(Horizontal,HorizontalChar);
+                    VerticalChar = NextIndex(Vertical,VerticalChar);
+                    check1 = horizontalCheck(Horizontal,HorizontalChar);
+                    check2 = verticalCheck(Vertical,VerticalChar);
+                }
+            }
+        }
+    }
+    return;
+}
+
 int main(){
-    blankArrayReset();
-    for (int i = 0; i<row; i++){
+    blankArrayReset(); //inisialisasi matriks jawaban
+    for (int i = 0; i<row; i++){ //input matriks puzzle
         for(int j = 0; j<col; j++){
             cin>>arrayChar[i][j];
         }
     }
 
-    for(int i = 0; i<WordCount; i++){
+    for(int i = 0; i<WordCount; i++){ //input daftar kata
         cin>>WordList[i];
     }
-
-    for(int i = 0; i<WordCount; i++){
-        cout<<WordList[i]<<"\n";
-    }
     //1. Cek horizontal ke kanan
-    for(int i = 0; i<row; i++){
-        StringTemp = "";  //reset string
-        blankArrayReset();
-        for(int j = 0; j<col; j++){
-            RightChar = j;
-            StringTemp = "";  //reset string
-            blankArrayReset();
-            while(RightChar<col){
-                StringTemp = StringTemp + arrayChar[i][RightChar];
-                blankArray[i][RightChar] = arrayChar[i][RightChar];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    cout<<StringTemp<<"\n";
-                }
-                RightChar++;
-            }
-        }
-    }
-
-    //2. Cek Vertikal ke bawah
-    for(int j = 0; j<col; j++){ // kolom
-        StringTemp = "";  //reset string
-        blankArrayReset();
-        for(int i = 0; i<row; i++){//Baris
-            DownChar = i;
-            StringTemp = "";
-            blankArrayReset();
-            while(DownChar<row){
-                StringTemp = StringTemp + arrayChar[DownChar][j];
-                blankArray[DownChar][j] = arrayChar[DownChar][j];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    cout<<StringTemp<<"\n";
-                }
-                DownChar++;
-            }
-        }
-    }
-    //3. Cek diagonal kanan bawah
-    for(int i = 0; i<row; i++){
-        StringTemp = "";
-        blankArrayReset();
-        for(int j = 0; j<col; j++){//Baris
-            DownChar = i;
-            RightChar = j;
-            StringTemp = "";
-            blankArrayReset();
-            while(DownChar<row && RightChar<col){
-                StringTemp = StringTemp + arrayChar[DownChar][RightChar];
-                blankArray[DownChar][RightChar] = arrayChar[DownChar][RightChar];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    cout<<StringTemp<<"\n";
-                }
-                DownChar++;
-                RightChar++;
-            }
-        }
-    }
-    //4. Cek horizontal kiri
-    for(int i = 0; i<row; i++){
-        StringTemp = "";  //reset string
-        blankArrayReset();
-        for(int j = 0; j<col; j++){
-            LeftChar = j;
-            StringTemp = "";  //reset string
-            blankArrayReset();
-            while(LeftChar>=0){
-                StringTemp = StringTemp + arrayChar[i][LeftChar];
-                blankArray[i][LeftChar] = arrayChar[i][LeftChar];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    cout<<StringTemp<<"\n";
-                }
-                
-                LeftChar--;
-            }
-        }
-    }
-    //5. Cek Vertikal Ke atas
-    for(int j = 0; j<col; j++){ // kolom
-        StringTemp = "";  //reset string
-        blankArrayReset();
-        for(int i = 0; i<row; i++){//Baris
-            UpChar = i;
-            StringTemp = "";
-            blankArrayReset();
-            while(UpChar>=0){
-                StringTemp = StringTemp + arrayChar[UpChar][j];
-                blankArray[UpChar][j] = arrayChar[UpChar][j];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    cout<<StringTemp<<"\n";
-                }
-                UpChar--;
-            }
-        }
-    }
-    //6. kanan atas
-    for(int i = 0; i<row; i++){
-        StringTemp = "";
-        blankArrayReset();
-        for(int j = 0; j<col; j++){//Baris
-            UpChar = i;
-            RightChar = j;
-            StringTemp = "";
-            blankArrayReset();
-            while(UpChar>=0 && RightChar<col){
-                StringTemp = StringTemp + arrayChar[UpChar][RightChar];
-                blankArray[UpChar][RightChar] = arrayChar[UpChar][RightChar];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    cout<<StringTemp<<"\n";
-                }
-                
-                UpChar--;
-                RightChar++;
-            }
-        }
-    }
-
-    //7. kiri atas
-    for(int i = 0; i<row; i++){
-        StringTemp = "";
-        blankArrayReset();
-        for(int j = 0; j<col; j++){//Baris
-            UpChar = i;
-            LeftChar = j;
-            StringTemp = "";
-            blankArrayReset();
-            while(UpChar>=0 && LeftChar>=0){
-                StringTemp = StringTemp + arrayChar[UpChar][LeftChar];
-                blankArray[UpChar][LeftChar] = arrayChar[UpChar][LeftChar];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    cout<<StringTemp<<"\n";
-                }
-                
-                UpChar--;
-                LeftChar--;
-            }
-        }
-    }
-
-    //8. kiri bawah
-    for(int i = 0; i<row; i++){
-        StringTemp = "";
-        blankArrayReset();
-        for(int j = 0; j<col; j++){//Baris
-            DownChar = i;
-            LeftChar = j;
-            StringTemp = "";
-            blankArrayReset();
-            while(DownChar<row && LeftChar>=0){
-                StringTemp = StringTemp + arrayChar[DownChar][LeftChar];
-                blankArray[DownChar][LeftChar] = arrayChar[DownChar][LeftChar];
-                if(isAnswerFound(StringTemp)){
-                    PrintBlankArray();
-                    
-                }
-                cout<<StringTemp<<"\n";
-                DownChar++;
-                LeftChar--;
-            }
-        }
-    }
-    //sisanya copas copas aja wkwkwk
+    PrintSolutions(1,0);
+    //2. Cek horizontal kiri
+    PrintSolutions(-1,0);
+    //3. Cek Vertikal atas
+    PrintSolutions(0,-1);
+    //4. Cek Vertikal bawah
+    PrintSolutions(0,1);
+    //5. Cek diagonal kanan bawah
+    PrintSolutions(1,1);
+    //6. Cek diagonal kanan atas
+    PrintSolutions(1,-1);
+    //7. Cek diagonal kiri atas
+    PrintSolutions(-1,-1);
+    //8. Cek diagonal kiri bawah
+    PrintSolutions(-1,1);
     return 0;
 }
