@@ -1,24 +1,24 @@
 #include <bits/stdc++.h>
 using namespace std;
 char arrayChar[7][8];
-char blankArray[7][8];
+char BlankMatrix[7][8];
 string WordList[8];
 string inputString,StringTemp;
 int RightChar,LeftChar,UpChar,DownChar;
 int row = 7;
 int col = 8;
 int WordCount = 8;
-void blankArrayReset(){ //inisialisasi semua isi matriks jawaban dengan "-"
+void BlankMatrixReset(){ //inisialisasi semua isi matriks jawaban dengan "-"
     for(int i = 0; i<row; i++){
         for(int j = 0; j<col; j++){
-            blankArray[i][j] = '-';
+            BlankMatrix[i][j] = '-';
         }
     }
 }
-void PrintBlankArray(){ //cetak matriks jawaban
+void PrintBlankMatrix(){ //cetak matriks jawaban
     for(int i = 0; i<row; i++){
         for(int j = 0; j<col; j++){
-            cout<<blankArray[i][j]<<" ";
+            cout<<BlankMatrix[i][j]<<" ";
         }
         cout<<"\n";
     }
@@ -64,19 +64,19 @@ void PrintSolutions(int Horizontal, int Vertical){
     bool check1,check2;
     for(int i = 0; i<row; i++){
         StringTemp = "";  //reset string
-        blankArrayReset();
+        BlankMatrixReset();
         for(int j = 0; j<col; j++){
             HorizontalChar = j;
             VerticalChar = i;
             StringTemp = "";
-            blankArrayReset();
+            BlankMatrixReset();
             if(Vertical == 0){ //vertikal saja
                 check1 = horizontalCheck(Horizontal,HorizontalChar);
                 while(check1){
                     StringTemp = StringTemp + arrayChar[i][HorizontalChar];
-                    blankArray[i][HorizontalChar] = arrayChar[i][HorizontalChar];
+                    BlankMatrix[i][HorizontalChar] = arrayChar[i][HorizontalChar];
                     if(isAnswerFound(StringTemp)){
-                        PrintBlankArray();
+                        PrintBlankMatrix();
                         cout<<StringTemp<<"\n";
                     }
                     HorizontalChar = NextIndex(Horizontal,HorizontalChar);
@@ -86,9 +86,9 @@ void PrintSolutions(int Horizontal, int Vertical){
                 check1 = verticalCheck(Vertical,VerticalChar);
                 while(check1){
                     StringTemp = StringTemp + arrayChar[VerticalChar][j];
-                    blankArray[VerticalChar][j] = arrayChar[VerticalChar][j];
+                    BlankMatrix[VerticalChar][j] = arrayChar[VerticalChar][j];
                     if(isAnswerFound(StringTemp)){
-                        PrintBlankArray();
+                        PrintBlankMatrix();
                         cout<<StringTemp<<"\n";
                     }
                     VerticalChar = NextIndex(Vertical,VerticalChar);
@@ -99,9 +99,9 @@ void PrintSolutions(int Horizontal, int Vertical){
                 check2 = verticalCheck(Vertical,VerticalChar);
                 while(check1 && check2){
                     StringTemp = StringTemp + arrayChar[VerticalChar][HorizontalChar];
-                    blankArray[VerticalChar][HorizontalChar] = arrayChar[VerticalChar][HorizontalChar];
+                    BlankMatrix[VerticalChar][HorizontalChar] = arrayChar[VerticalChar][HorizontalChar];
                     if(isAnswerFound(StringTemp)){
-                        PrintBlankArray();
+                        PrintBlankMatrix();
                         cout<<StringTemp<<"\n";
                     }
                     HorizontalChar = NextIndex(Horizontal,HorizontalChar);
@@ -116,7 +116,7 @@ void PrintSolutions(int Horizontal, int Vertical){
 }
 
 int main(){
-    blankArrayReset(); //inisialisasi matriks jawaban
+    BlankMatrixReset(); //inisialisasi matriks jawaban
     for (int i = 0; i<row; i++){ //input matriks puzzle
         for(int j = 0; j<col; j++){
             cin>>arrayChar[i][j];
