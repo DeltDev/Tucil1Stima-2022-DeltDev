@@ -53,57 +53,54 @@ int NextIndex(int HV, int HVChar){ //fungsi pembantu untuk menentukan indeks sel
         return HVChar-1;
     }
 }
+void PrintOneSolution(string StringAns){
+    if(isAnswerFound(StringAns)){
+        PrintBlankMatrix();
+        cout<<StringAns<<"\n";
+    }
+}
 void PrintSolutions(int Horizontal, int Vertical){
     //keterangan:
     //Horizontal: 0: diam di tempat 1: kanan -1: kiri
     //Vertical: 0: diam di tempat 1: bawah -1: atas
-    if(Horizontal == 0 && Vertical == 0){
+    if(Horizontal == 0 && Vertical == 0){ //kalau horizontal dan vertikal sama-sama di tempat, buat apa dicari solusinya?
         return;
     }
     int HorizontalChar,VerticalChar;
     bool check1,check2;
     for(int i = 0; i<row; i++){
-        StringTemp = "";  //reset string
+        StringTemp = "";  //reset string dan matriks solusi
         BlankMatrixReset();
         for(int j = 0; j<col; j++){
             HorizontalChar = j;
             VerticalChar = i;
             StringTemp = "";
             BlankMatrixReset();
-            if(Vertical == 0){ //vertikal saja
+            if(Vertical == 0){ //cari solusi untuk horizontal saja
                 check1 = horizontalCheck(Horizontal,HorizontalChar);
                 while(check1){
                     StringTemp = StringTemp + arrayChar[i][HorizontalChar];
                     BlankMatrix[i][HorizontalChar] = arrayChar[i][HorizontalChar];
-                    if(isAnswerFound(StringTemp)){
-                        PrintBlankMatrix();
-                        cout<<StringTemp<<"\n";
-                    }
+                    PrintOneSolution(StringTemp);
                     HorizontalChar = NextIndex(Horizontal,HorizontalChar);
                     check1 = horizontalCheck(Horizontal,HorizontalChar);
                 }
-            } else if(Horizontal == 0){ //horizontal saja
+            } else if(Horizontal == 0){ //cari solusi untuk vertikal saja
                 check1 = verticalCheck(Vertical,VerticalChar);
                 while(check1){
                     StringTemp = StringTemp + arrayChar[VerticalChar][j];
                     BlankMatrix[VerticalChar][j] = arrayChar[VerticalChar][j];
-                    if(isAnswerFound(StringTemp)){
-                        PrintBlankMatrix();
-                        cout<<StringTemp<<"\n";
-                    }
+                    PrintOneSolution(StringTemp);
                     VerticalChar = NextIndex(Vertical,VerticalChar);
                     check1 = verticalCheck(Vertical,VerticalChar);
                 }
-            } else { //diagonal
+            } else { // cari solusi untuk diagonal
                 check1 = horizontalCheck(Horizontal,HorizontalChar);
                 check2 = verticalCheck(Vertical,VerticalChar);
                 while(check1 && check2){
                     StringTemp = StringTemp + arrayChar[VerticalChar][HorizontalChar];
                     BlankMatrix[VerticalChar][HorizontalChar] = arrayChar[VerticalChar][HorizontalChar];
-                    if(isAnswerFound(StringTemp)){
-                        PrintBlankMatrix();
-                        cout<<StringTemp<<"\n";
-                    }
+                    PrintOneSolution(StringTemp);
                     HorizontalChar = NextIndex(Horizontal,HorizontalChar);
                     VerticalChar = NextIndex(Vertical,VerticalChar);
                     check1 = horizontalCheck(Horizontal,HorizontalChar);
@@ -126,21 +123,11 @@ int main(){
     for(int i = 0; i<WordCount; i++){ //input daftar kata
         cin>>WordList[i];
     }
-    //1. Cek horizontal ke kanan
-    PrintSolutions(1,0);
-    //2. Cek horizontal kiri
-    PrintSolutions(-1,0);
-    //3. Cek Vertikal atas
-    PrintSolutions(0,-1);
-    //4. Cek Vertikal bawah
-    PrintSolutions(0,1);
-    //5. Cek diagonal kanan bawah
-    PrintSolutions(1,1);
-    //6. Cek diagonal kanan atas
-    PrintSolutions(1,-1);
-    //7. Cek diagonal kiri atas
-    PrintSolutions(-1,-1);
-    //8. Cek diagonal kiri bawah
-    PrintSolutions(-1,1);
+    //Cari semua solusi 8 arah mata angin
+    for(int i = -1; i<=1; i++){
+        for(int j = -1; j<=1; j++){
+            PrintSolutions(i,j);
+        }
+    }
     return 0;
 }
